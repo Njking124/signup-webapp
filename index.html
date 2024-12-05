@@ -98,6 +98,7 @@
             <input type="text" id="otp" placeholder="Enter OTP" required>
             <button type="submit">Submit OTP</button>
         </form>
+        <p id="otp_status"></p>
     </div>
 
     <script>
@@ -183,17 +184,41 @@
             });
 
             const result = await response.json();
-            if (response.ok) {
-                // Handle success, e.g., show success message or redirect user
-                showToast("OTP Verified Successfully!", 'success');
-                // Optionally, close the web app or proceed with next steps
-            } else {
-                const statusCode = response.status;
-                let errorMessage = result.message || "Unknown error occurred";
+            const ackData = JSON.stringify({
+                    action: "otp_verified",
+                    telegram_id: userId,
+                    username: telegramUsername
+                });
 
-                document.getElementById('status').textContent = `Error: ${errorMessage}, Status Code: ${statusCode}, Response: ${JSON.stringify(result)}`;
-                showToast(`Error: ${errorMessage} (Status: ${statusCode})`, 'error');
-            }
+            console.log("Preparing to send data to the bot:", ackData);
+            Telegram.WebApp.sendData(ackData);
+            console.log("Data sent to the bot");
+            Telegram.WebApp.close()
+            // if (response.ok) {
+            //     // OTP verified successfully
+            //     showToast("OTP Verified Successfully!", 'success');
+
+            //     // Send acknowledgment securely to the bot using Telegram script
+            //     const ackData = JSON.stringify({
+            //         action: "otp_verified",
+            //         telegram_id: userId,
+            //         username: telegramUsername
+            //     });
+
+            //     tg.sendData(ackData); // Securely sends data to the bot
+            // } else {
+            //     const statusCode = response.status;
+            //     let errorMessage = result.message || "Unknown error occurred";
+
+            //     if (statusCode === 400){
+            //         errorMessage = "Invalid OTP";
+            //         showToast(errorMessage, 'error');
+            //         return;
+            //     }
+
+            //     document.getElementById('otp_status').textContent = `Error: ${errorMessage}, Status Code: ${statusCode}, Response: ${JSON.stringify(result)}`;
+            //     showToast(`Error: ${errorMessage} (Status: ${statusCode})`, 'error');
+            // }
         });
     </script>
 </body>
