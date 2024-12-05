@@ -96,15 +96,23 @@
         <h3>Enter OTP</h3>
         <form id="otp-form">
             <input type="text" id="otp" placeholder="Enter OTP" required>
-            <button type="submit">Submit OTP</button>
+            <!-- <button type="submit">Submit OTP</button> -->
         </form>
         <p id="otp_status"></p>
     </div>
 
     <script>
+        function getQueryParam(param) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(param);
+        }
+
+
         const tg = window.Telegram.WebApp;
-        const userId = tg.initDataUnsafe.user.id;
-        const telegramUsername = tg.initDataUnsafe.user.username;
+        // const userId = tg.initDataUnsafe.user.id;
+        // const telegramUsername = tg.initDataUnsafe.user.username;
+        const userId = getQueryParam('user_id');
+        const telegramUsername = getQueryParam('username');
 
         // Pre-fill username field if available
         const usernameField = document.getElementById('username');
@@ -153,6 +161,35 @@
                 // Show OTP form dynamically
                 signupContainer.style.display = 'none';  // Hide signup form
                 otpContainer.style.display = 'block';  // Show OTP form
+
+                Telegram.WebApp.MainButton.setText('Verify OTP').show().onClick(async function () {
+
+                const otp = document.getElementById('otp').value;
+
+                const response = await fetch('https://testapi.soundofmeme.com/telegram/register/verify', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        telegram_id: userId,
+                        otp: otp
+                    })
+                });
+
+                const result = await response.json();
+                if (response.ok) {
+                    const ackData = JSON.stringify({
+                        action: "otp_verified",
+                        telegram_id: userId,
+                        username: telegramUsername
+                    });
+
+                    Telegram.WebApp.sendData(ackData);
+                    Telegram.WebApp.close();
+                } else {
+                    alert("Invalid OTP");
+                }
+                });
+
                 // formTitle.textContent = "Verify OTP";  // Change title to OTP form title
             } else {
                 const statusCode = response.status;
@@ -169,31 +206,31 @@
             }
         });
 
-        otpForm.addEventListener('submit', async (event) => {
-            event.preventDefault();
+        // otpForm.addEventListener('submit', async (event) => {
+        //     event.preventDefault();
 
-            const otp = document.getElementById('otp').value;
+        //     const otp = document.getElementById('otp').value;
 
-            const response = await fetch('https://testapi.soundofmeme.com/telegram/register/verify', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    telegram_id: userId,
-                    otp: otp
-                })
-            });
+        //     const response = await fetch('https://testapi.soundofmeme.com/telegram/register/verify', {
+        //         method: 'POST',
+        //         headers: { 'Content-Type': 'application/json' },
+        //         body: JSON.stringify({
+        //             telegram_id: userId,
+        //             otp: otp
+        //         })
+        //     });
 
-            const result = await response.json();
-            const ackData = JSON.stringify({
-                    action: "otp_verified",
-                    telegram_id: userId,
-                    username: telegramUsername
-                });
+        //     const result = await response.json();
+        //     const ackData = JSON.stringify({
+        //             action: "otp_verified",
+        //             telegram_id: userId,
+        //             username: telegramUsername
+        //         });
 
-            console.log("Preparing to send data to the bot:", ackData);
-            Telegram.WebApp.sendData(ackData);
-            console.log("Data sent to the bot");
-            Telegram.WebApp.close()
+        //     console.log("Preparing to send data to the bot:", ackData);
+        //     Telegram.WebApp.sendData(ackData);
+        //     console.log("Data sent to the bot");
+        //     Telegram.WebApp.close()
             // if (response.ok) {
             //     // OTP verified successfully
             //     showToast("OTP Verified Successfully!", 'success');
@@ -219,7 +256,10 @@
             //     document.getElementById('otp_status').textContent = `Error: ${errorMessage}, Status Code: ${statusCode}, Response: ${JSON.stringify(result)}`;
             //     showToast(`Error: ${errorMessage} (Status: ${statusCode})`, 'error');
             // }
-        });
+        // });
+
+        
+
     </script>
 </body>
 </html>
