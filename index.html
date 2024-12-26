@@ -114,6 +114,9 @@
         const userId = getQueryParam('user_id');
         const telegramUsername = getQueryParam('username');
 
+        // Convert to BigInt and then to Number to ensure proper integer handling
+        const userIdInt = parseInt(userId, 10);
+
         // Pre-fill username field if available
         const usernameField = document.getElementById('username');
         if (telegramUsername) {
@@ -148,7 +151,7 @@
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    telegram_id: userId,
+                    telegram_id: userIdInt,
                     username: telegramUsername,
                     name: name,
                     email: email
@@ -170,7 +173,7 @@
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        telegram_id: userId,
+                        telegram_id: userIdInt,
                         otp: otp
                     })
                 });
@@ -179,7 +182,7 @@
                 if (response.ok) {
                     const ackData = JSON.stringify({
                         action: "otp_verified",
-                        telegram_id: userId,
+                        telegram_id: userIdInt,
                         username: telegramUsername
                     });
 
