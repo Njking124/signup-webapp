@@ -203,6 +203,17 @@
             transition: all 0.3s ease;
         }
 
+        /* Remove focus styles for all buttons */
+        button {
+            outline: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        button:focus {
+            outline: none;
+            box-shadow: none;
+        }
+        
         button:hover {
             box-shadow: 0 4px 12px rgba(5, 150, 105, 0.2);
         }
@@ -277,6 +288,13 @@
             padding: 0;
             margin: 0;
             line-height: 1;
+            outline: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .toggle-password:focus {
+            outline: none;
+            box-shadow: none;
         }
 
         /* Update form spacing */
