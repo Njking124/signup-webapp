@@ -120,14 +120,30 @@
 
         .toast {
             position: fixed;
-            top: 1rem;
-            right: 1rem;
-            padding: 1rem;
+            left: 0;
+            right: 0;
+            top: 20px;
+            margin: auto;
+            padding: 1rem 2rem;
             border-radius: 8px;
             background: white;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
             z-index: 1000;
-            animation: slideIn 0.3s ease-out;
+            text-align: center;
+            width: 80%;
+            max-width: 300px;
+            animation: toastFadeInTop 0.3s ease-out;
+        }
+
+        @keyframes toastFadeInTop {
+            from {
+                opacity: 0;
+                transform: translateY(-100%);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .toast.success {
@@ -375,12 +391,12 @@
                         return;
                     }
 
-                    document.getElementById('status').textContent = `Error: ${errorMessage}, Status Code: ${statusCode}, Response: ${JSON.stringify(result)}`;
+                    // document.getElementById('status').textContent = `Error: ${errorMessage}, Status Code: ${statusCode}, Response: ${JSON.stringify(result)}`;
                     showToast(`Error: ${errorMessage} (Status: ${statusCode})`, 'error');
                 }
             } catch (error) {
-                showToast("Network error occurred", 'error');
-                console.error('Signup error:', error);
+                console.error('Error:', error);  // Log error to console for debugging
+                showToast("Unable to connect. Please try again later.", 'error');
             }
         });
 
@@ -498,12 +514,13 @@
                     if (response.status === 400) {
                         showToast("Invalid email or password", 'error');
                     } else {
-                        showToast("An error occurred during login", 'error');
+                        showToast("Something went wrong. Please try again.", 'error');
                     }
+                    return;
                 }
             } catch (error) {
-                showToast("Network error occurred", 'error');
-                console.error('Login error:', error);
+                console.error('Error:', error);  // Log error to console for debugging
+                showToast("Unable to connect. Please try again later.", 'error');
             }
         });
 
