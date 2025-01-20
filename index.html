@@ -613,7 +613,7 @@
                     Telegram.WebApp.sendData(ackData);
                     Telegram.WebApp.close();
                 } else {
-                    if (response.status === 400) {
+                    if (response.status === 401) {
                         showToast("Invalid email or password", 'error');
                     } else {
                         showToast("Something went wrong. Please try again.", 'error');
